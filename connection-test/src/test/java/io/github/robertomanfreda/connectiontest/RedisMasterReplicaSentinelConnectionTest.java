@@ -1,31 +1,57 @@
 package io.github.robertomanfreda.connectiontest;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import static io.lettuce.core.ReadFrom.REPLICA_PREFERRED;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-@TestPropertySource(properties = "spring.config.additional-location=classpath:application-master-replica-sentinel.yml")
 public class RedisMasterReplicaSentinelConnectionTest {
 
-    @Autowired
+    private LettuceConnectionFactory factory;
     private RedisTemplate<String, String> redisTemplate;
 
-    private ValueOperations<String, String> valueOps;
-
     @BeforeEach
-    public void setUp() {
-        valueOps = redisTemplate.opsForValue();
+    void setUp() {
+        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
+                .master("mymaster")
+                .sentinel("192.168.1.145", 26379)
+                .sentinel("192.168.1.146", 26379)
+                .sentinel("192.168.1.147", 26379);
+
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .readFrom(REPLICA_PREFERRED)
+                .build();
+
+        factory = new LettuceConnectionFactory(sentinelConfig, clientConfig);
+
+        redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(factory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.afterPropertiesSet();
+
+        factory.start();
+    }
+
+    @AfterEach
+    void tearDown() {
+        factory.stop();
     }
 
     @Test
     public void testWriteReadDelete() {
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+
         // Write
         String key = "testKey";
         String value = "Hello Redis";
