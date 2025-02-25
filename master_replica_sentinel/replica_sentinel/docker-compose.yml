@@ -4,8 +4,8 @@ services:
     container_name: redis
     command: "redis-server /usr/local/etc/redis/redis.conf"
     volumes:
-      - ./master/data:/data
-      - ./master/conf:/usr/local/etc/redis
+      - ./replica/data:/data
+      - ./replica/conf:/usr/local/etc/redis
     network_mode: host
 
   sentinel:
