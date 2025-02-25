@@ -22,17 +22,19 @@ public class RedisMasterReplicaSentinelConnectionTest {
 
     @BeforeEach
     void setUp() {
-        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
+        RedisSentinelConfiguration redisConfig = new RedisSentinelConfiguration()
                 .master("mymaster")
                 .sentinel("192.168.1.145", 26379)
                 .sentinel("192.168.1.146", 26379)
                 .sentinel("192.168.1.147", 26379);
+        redisConfig.setPassword("foobar");
+        redisConfig.setSentinelPassword("foobarbaz");
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
                 .readFrom(REPLICA_PREFERRED)
                 .build();
 
-        factory = new LettuceConnectionFactory(sentinelConfig, clientConfig);
+        factory = new LettuceConnectionFactory(redisConfig, clientConfig);
 
         redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(factory);
