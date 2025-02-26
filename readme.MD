@@ -75,7 +75,7 @@ to the **Sentinel** example in this repository for guidance on setting up and ma
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/robertomanfreda/redis-deployments.git
     ```
 
 2. Navigate to the desired example folder:
