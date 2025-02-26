@@ -65,10 +65,9 @@ At the moment, this repository includes examples for the following Redis deploym
 
 ## Current Status
 
-At the moment, this repository **only** supports the **Sentinel** deployment mode. Future updates will include examples
-and configurations for other modes, including Redis Cluster.
+Future updates will include examples and configurations for Redis Cluster.
 
-If you're looking for high availability and automatic failover, Redis with Sentinel is a reliable choice. For now, refer
+If you're looking for high availability and automatic failover, Redis with Sentinel is a reliable choice. Refer
 to the **Sentinel** example in this repository for guidance on setting up and managing your Redis deployment.
 
 ## How to Get Started
