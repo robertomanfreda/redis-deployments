@@ -1,0 +1,20 @@
+services:
+  redis_master:
+    image: redis:7.4.2
+    container_name: redis_master
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+    volumes:
+      - ./master/data:/data
+      - ./master/conf:/usr/local/etc/redis
+    network_mode: host
+
+  redis_replica:
+    image: redis:7.4.2
+    container_name: redis_replica
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+    volumes:
+      - ./replica/data:/data
+      - ./replica/conf:/usr/local/etc/redis
+    depends_on:
+      - redis_master
+    network_mode: host
