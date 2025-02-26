@@ -1,0 +1,9 @@
+services:
+  redis:
+    image: redis:7.4.2
+    container_name: redis
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+    volumes:
+      - ./data:/data
+      - ./conf:/usr/local/etc/redis
+    network_mode: host

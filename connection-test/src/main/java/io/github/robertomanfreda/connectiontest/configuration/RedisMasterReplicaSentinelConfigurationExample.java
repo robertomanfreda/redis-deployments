@@ -2,6 +2,7 @@ package io.github.robertomanfreda.connectiontest.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -10,7 +11,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import static io.lettuce.core.ReadFrom.REPLICA_PREFERRED;
 
-//@Configuration
+@Configuration
 public class RedisMasterReplicaSentinelConfigurationExample {
 
     @Bean
@@ -37,7 +38,7 @@ public class RedisMasterReplicaSentinelConfigurationExample {
     }
 
     @Bean
-    public RedisTemplate<String, String> lettuceConnectionFactory(@Autowired LettuceConnectionFactory
+    public RedisTemplate<String, String> redisTemplate(@Autowired LettuceConnectionFactory
                                                                           lettuceConnectionFactory) {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(lettuceConnectionFactory);
