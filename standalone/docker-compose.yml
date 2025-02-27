@@ -6,4 +6,5 @@ services:
     volumes:
       - ./data:/data
       - ./conf:/usr/local/etc/redis
-    network_mode: host
+    ports:
+      - "6379:6379"
