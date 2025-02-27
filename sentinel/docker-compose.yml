@@ -68,7 +68,7 @@ services:
     command:
       - |
         chown redis:redis /usr/local/etc/redis/redis.conf 
-        redis-server /usr/local/etc/redis/redis.conf
+        redis-server /usr/local/etc/redis/redis.conf --sentinel
     volumes:
       - ./sentinels/0/conf:/usr/local/etc/redis
     depends_on:
@@ -86,7 +86,7 @@ services:
     command:
       - |
         chown redis:redis /usr/local/etc/redis/redis.conf 
-        redis-server /usr/local/etc/redis/redis.conf
+        redis-server /usr/local/etc/redis/redis.conf --sentinel
     volumes:
       - ./sentinels/1/conf:/usr/local/etc/redis
     depends_on:
@@ -104,7 +104,7 @@ services:
     command:
       - |
         chown redis:redis /usr/local/etc/redis/redis.conf 
-        redis-server /usr/local/etc/redis/redis.conf
+        redis-server /usr/local/etc/redis/redis.conf --sentinel
     volumes:
       - ./sentinels/2/conf:/usr/local/etc/redis
     depends_on:
