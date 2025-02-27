@@ -25,6 +25,8 @@ At the moment, this repository includes examples for the following Redis deploym
     - No redundancy: If the Redis instance fails, the service is down.
     - No scalability: All reads and writes are handled by a single node, which can become a bottleneck.
 
+[Show More](./standalone/readme.MD)
+
 ### 2. **Master-Replica Redis**
 
 - **Description**: This configuration includes one master Redis instance and one or more replica nodes. The replicas
@@ -36,6 +38,8 @@ At the moment, this repository includes examples for the following Redis deploym
     - No automatic failover: If the master node goes down, manual intervention is required to promote a replica to
       master.
     - Writes are still limited to the master, potentially creating a bottleneck.
+
+[Show More](./master_replica/readme.MD)
 
 ### 3. **Redis with Sentinel**
 
@@ -50,6 +54,8 @@ At the moment, this repository includes examples for the following Redis deploym
       more capacity, you'll need to add more replicas.
     - Sentinel adds complexity: You need to configure and manage at least 3 Sentinel nodes for quorum and proper
       failover.
+
+[Show More](./sentinel/readme.MD)
 
 ### 4. **Redis Cluster**
 
