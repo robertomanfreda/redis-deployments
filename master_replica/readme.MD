@@ -34,8 +34,7 @@ master_replica/
 ### ❌ Cons:
 
 - **No automatic failover**: If the master goes down, replicas do not automatically become the new master.
-- **Single write node**: All write operations go through the master, which can become a bottleneck in high-write
-  scenarios.
+- **Write operations are limited to the master**: This can create a bottleneck in write-heavy workloads.
 
 ## Deployment Instructions
 
