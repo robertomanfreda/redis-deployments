@@ -1,12 +1,13 @@
 services:
   redis_master:
     image: redis:7.4.2
-    container_name: redis_master
+    container_name: redis-master
     command: "redis-server /usr/local/etc/redis/redis.conf"
     volumes:
       - ./master/data:/data
       - ./master/conf:/usr/local/etc/redis
-    network_mode: host
+    ports:
+      - "6379:6379"
 
   redis_replica:
     image: redis:7.4.2
@@ -17,4 +18,5 @@ services:
       - ./replica/conf:/usr/local/etc/redis
     depends_on:
       - redis_master
-    network_mode: host
+    ports:
+      - "6380:6380"

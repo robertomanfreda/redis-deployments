@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,28 +15,23 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import static io.lettuce.core.ReadFrom.REPLICA_PREFERRED;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "sentinel")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "standalone")
 @SpringBootTest
-public class RedisMasterReplicaSentinelConnectionTest {
+public class MasterReplicaConnectionTest {
 
     private LettuceConnectionFactory factory;
     private RedisTemplate<String, String> redisTemplate;
 
     @BeforeEach
     void setUp() {
-        RedisSentinelConfiguration redisConfig = new RedisSentinelConfiguration()
-                .master("mymaster")
-                .sentinel("192.168.1.145", 26379)
-                .sentinel("192.168.1.146", 26379)
-                .sentinel("192.168.1.147", 26379);
-        redisConfig.setPassword("foobar");
-        redisConfig.setSentinelPassword("foobarbaz");
+        RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration("localhost", 6379);
+        serverConfig.setPassword("foobar");
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
                 .readFrom(REPLICA_PREFERRED)
                 .build();
 
-        factory = new LettuceConnectionFactory(redisConfig, clientConfig);
+        factory = new LettuceConnectionFactory(serverConfig, clientConfig);
 
         redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(factory);

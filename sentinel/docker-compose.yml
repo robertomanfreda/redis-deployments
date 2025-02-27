@@ -1,7 +1,0 @@
-services:
-  sentinel:
-    build: ./
-    container_name: sentinel
-    network_mode: host
-#    depends_on:
-#      - redis
