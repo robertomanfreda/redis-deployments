@@ -10,6 +10,9 @@ services:
     volumes:
       - ./master/data:/data
       - ./master/conf:/usr/local/etc/redis
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.2
     ports:
       - "6379:6379"
 
@@ -26,6 +29,9 @@ services:
       - ./replicas/0/conf:/usr/local/etc/redis
     depends_on:
       - redis-master
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.3
     ports:
       - "6380:6380"
 
@@ -42,6 +48,9 @@ services:
       - ./replicas/1/conf:/usr/local/etc/redis
     depends_on:
       - redis-master
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.4
     ports:
       - "6381:6381"
 
@@ -58,6 +67,9 @@ services:
       - ./replicas/2/conf:/usr/local/etc/redis
     depends_on:
       - redis-master
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.5
     ports:
       - "6382:6382"
 
@@ -76,6 +88,9 @@ services:
       - redis-replica-0
       - redis-replica-1
       - redis-replica-2
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.6
     ports:
       - "26379:26379"
 
@@ -94,6 +109,9 @@ services:
       - redis-replica-0
       - redis-replica-1
       - redis-replica-2
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.7
     ports:
       - "26380:26380"
 
@@ -112,5 +130,15 @@ services:
       - redis-replica-0
       - redis-replica-1
       - redis-replica-2
+    networks:
+      redis-net:
+        ipv4_address: 172.18.0.8
     ports:
       - "26381:26351"
+
+networks:
+  redis-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.18.0.0/16"
