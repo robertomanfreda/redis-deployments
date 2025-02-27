@@ -43,7 +43,7 @@ services:
     depends_on:
       - redis-master
     ports:
-      - "6380:6380"
+      - "6381:6381"
 
   redis-replica-2:
     image: redis:7.4.2
@@ -59,7 +59,7 @@ services:
     depends_on:
       - redis-master
     ports:
-      - "6381:6381"
+      - "6382:6382"
 
   redis-sentinel-0:
     image: redis:7.4.2
