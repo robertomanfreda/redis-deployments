@@ -1,0 +1,144 @@
+services:
+  redis-master:
+    image: redis:7.4.2
+    container_name: redis-master
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./master/data:/data
+      - ./master/conf:/usr/local/etc/redis
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.2
+    ports:
+      - "6379:6379"
+
+  redis-replica-0:
+    image: redis:7.4.2
+    container_name: redis-replica-0
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./replicas/0/data:/data
+      - ./replicas/0/conf:/usr/local/etc/redis
+    depends_on:
+      - redis-master
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.3
+    ports:
+      - "6380:6380"
+
+  redis-replica-1:
+    image: redis:7.4.2
+    container_name: redis-replica-1
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./replicas/1/data:/data
+      - ./replicas/1/conf:/usr/local/etc/redis
+    depends_on:
+      - redis-master
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.4
+    ports:
+      - "6381:6381"
+
+  redis-replica-2:
+    image: redis:7.4.2
+    container_name: redis-replica-2
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./replicas/2/data:/data
+      - ./replicas/2/conf:/usr/local/etc/redis
+    depends_on:
+      - redis-master
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.5
+    ports:
+      - "6382:6382"
+
+  redis-sentinel-0:
+    image: redis:7.4.2
+    container_name: redis-sentinel-0
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf --sentinel
+    volumes:
+      - ./sentinels/0/conf:/usr/local/etc/redis
+    depends_on:
+      - redis-master
+      - redis-replica-0
+      - redis-replica-1
+      - redis-replica-2
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.6
+    ports:
+      - "26379:26379"
+
+  redis-sentinel-1:
+    image: redis:7.4.2
+    container_name: redis-sentinel-1
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf --sentinel
+    volumes:
+      - ./sentinels/1/conf:/usr/local/etc/redis
+    depends_on:
+      - redis-master
+      - redis-replica-0
+      - redis-replica-1
+      - redis-replica-2
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.7
+    ports:
+      - "26380:26380"
+
+  redis-sentinel-2:
+    image: redis:7.4.2
+    container_name: redis-sentinel-2
+    entrypoint: [ "/bin/bash","-c" ]
+    command:
+      - |
+        chown redis:redis /usr/local/etc/redis/redis.conf 
+        redis-server /usr/local/etc/redis/redis.conf --sentinel
+    volumes:
+      - ./sentinels/2/conf:/usr/local/etc/redis
+    depends_on:
+      - redis-master
+      - redis-replica-0
+      - redis-replica-1
+      - redis-replica-2
+    networks:
+      redis-net:
+        ipv4_address: 172.25.0.8
+    ports:
+      - "26381:26351"
+
+networks:
+  redis-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.25.0.0/16"
