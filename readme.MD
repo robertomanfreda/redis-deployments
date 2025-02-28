@@ -1,7 +1,5 @@
 # Redis Deployments 🚀
 
----
-
 ## Overview 📝
 
 This project provides a fully dockerized setup for Redis, including different deployment configurations:
