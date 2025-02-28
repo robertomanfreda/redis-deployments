@@ -61,5 +61,5 @@ These settings can be configured in `redis.conf`.
 
 ## License 📜
 
-This project is licensed under The Unlicense. See the [LICENSE](./LICENSE) file for details.
+This project is licensed under The Unlicense. See the [LICENSE](../LICENSE) file for details.
 
