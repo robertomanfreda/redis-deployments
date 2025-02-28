@@ -5,7 +5,7 @@
 This project provides a fully dockerized setup for Redis, including different deployment configurations:
 
 - 🏗️ [Standalone](./standalone/readme.MD)
-- 🏛️ [Master-Replica](./master-replica/readme.MD)
+- 🏛️ [Master-Replica](./master_replica/readme.MD)
 - 🛡️ [Sentinel](./sentinel/readme.MD)
 - 📡 [Cluster (planned for future release)](./cluster/readme.MD)
 
