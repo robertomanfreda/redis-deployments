@@ -7,10 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.lettuce.LettuceConnection;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/reserve")
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class ReservationController {
         String hashKey = lockRequest.getSeatType().concat(":").concat(String.valueOf(lockRequest.getSeatNumber()));
 
         Boolean saved = redisTemplate.opsForHash().putIfAbsent(key, hashKey, lockRequest);
-        hexpire(key, hashKey, HexpireOption.NX, 30);
+        hexpire(key, hashKey, HexpireOption.NX, 6000);
 
         return saved
                 ? ResponseEntity.ok().build()
@@ -42,7 +44,7 @@ public class ReservationController {
     }
 
     /*
-     * Manually releases the seat.
+     * Manually releases the seat by removing the hashKey.
      */
     @PostMapping("/unlock")
     public ResponseEntity<?> unlock() {
@@ -63,7 +65,22 @@ public class ReservationController {
      */
     @GetMapping("/locked-seats/{stadiumName}")
     public ResponseEntity<?> getLockedSeats(@PathVariable String stadiumName) {
-        return null;
+        String key = stadiumName.toLowerCase().concat(":seats");
+        Map<Object, Object> lockedSeats = redisTemplate.opsForHash().entries(key);
+        if (lockedSeats.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No locked seats found.");
+        }
+        return ResponseEntity.ok(lockedSeats);
+    }
+
+    /*
+     * Get the count of locked seats for a specific stadium
+     */
+    @GetMapping("/locked-seats/count/{stadiumName}")
+    public ResponseEntity<?> getLockedSeatsCount(@PathVariable String stadiumName) {
+        String key = stadiumName.toLowerCase().concat(":seats");
+        Long lockedSeatsCount = redisTemplate.opsForHash().size(key);
+        return ResponseEntity.ok().body("Number of locked seats: " + lockedSeatsCount);
     }
 
     /*
