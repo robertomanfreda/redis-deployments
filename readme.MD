@@ -122,6 +122,19 @@ Each Redis instance uses its respective `redis.conf` file, located within the `c
 
 Each Redis instance stores data in the `data/` directory, ensuring persistence across restarts.
 
+### RDB VS AOF
+
+| Feature             | RDB (Redis Database File)           | AOF (Append-Only File)                          |
+|---------------------|-------------------------------------|-------------------------------------------------|
+| **Persistence**     | Periodic snapshot of data           | Continuous log of write operations              |
+| **Performance**     | Faster, uses fewer resources        | Slower, ensures more data safety                |
+| **Durability**      | Risk of data loss between snapshots | Higher reliability with fsync                   |
+| **Memory Usage**    | Lower, only stores snapshots        | Higher, logs all operations                     |
+| **Recovery Speed**  | Faster (loads a compact file)       | Slower (replays all operations)                 |
+| **File Corruption** | More resilient to corruption        | Higher risk if the file is damaged              |
+| **Configurability** | Snapshot intervals (`save 900 1`)   | Various sync modes (`fsync always/everysec/no`) |
+| **Best Use Case**   | Periodic backup, high speed         | Maximum data reliability                        |
+
 ---
 
 ## License 📜
