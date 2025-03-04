@@ -134,7 +134,7 @@ services:
       redis-net:
         ipv4_address: 172.25.0.8
     ports:
-      - "26381:26351"
+      - "26381:26381"
 
 networks:
   redis-net:
