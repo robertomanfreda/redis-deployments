@@ -107,6 +107,29 @@ For more details, refer to the official Redis documentation: [Redis.io](https://
 
 ---
 
+### Election, Quorum ...
+
+| Concept                          | Description                                                                       | How to Avoid Issues                                                                    | Example                                                                 |
+|----------------------------------|-----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Leader Election**              | Process to elect a new leader when the primary fails                              | Use a reliable election mechanism (Raft, Sentinel, Zookeeper)                          | Redis Sentinel automatically promotes a replica to leader               |
+| **Quorum**                       | Minimum number of nodes that must agree before an action (e.g., failover) happens | Set quorum to `N/2 + 1` to avoid split-brain scenarios                                 | In a 5-node Sentinel setup, quorum should be `3`                        |
+| **Split Brain**                  | When network partitions cause multiple nodes to think they are leaders            | Use fencing tokens, quorum-based voting, or strong coordination                        | Redis Sentinel uses majority voting to decide on leader failover        |
+| **Failover Process**             | Automatic promotion of a new leader when the current one is unreachable           | Ensure majority of nodes agree before electing a leader                                | If a primary fails, Sentinel waits for quorum before electing a replica |
+| **Avoiding Dual Leadership**     | Prevents two nodes from assuming the leader role simultaneously                   | Use **epoch versions**, fencing mechanisms, and strong consistency models              | Redis Cluster uses `epoch` versions to track leadership history         |
+| **Network Partition Handling**   | Ensures that a partitioned leader does not process conflicting writes             | Implement network fencing and majority-based elections                                 | Sentinel ensures that only one partition has enough votes for leader    |
+| **Configuration Best Practices** | Proper setup to ensure reliable failover and high availability                    | Set up Sentinel with at least 3 nodes and configure `down-after-milliseconds` properly | `sentinel monitor mymaster 127.0.0.1 6379 2` (where `2` is quorum)      |
+
+📌 **Official Documentation:**
+
+- 🔗 [Redis Sentinel - Automatic Failover](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/)
+- 🔗 [Redis Cluster - Leader Election](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/)
+
+✅ **Best Practice:** Always deploy at least **three Sentinel nodes** (or an odd number in cluster setups) to avoid *
+*split-brain scenarios** and ensure correct quorum-based leader election. 🚀
+
+
+---
+
 ## Caching Patterns 🔥
 
 ### Cache-aside 🏃‍♂️
