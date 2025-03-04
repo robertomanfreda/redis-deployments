@@ -69,6 +69,40 @@ its architecture:
   availability.
 - 🔀 **Sharding for scalability:** Redis Cluster enables horizontal scaling by partitioning data across multiple nodes.
 
+### Single-thread Nature
+
+> ... Another contributing factor is its predominantly single-threaded nature: single-threading avoids race conditions
+> and CPU-heavy context switching associated with threads
+> @https://redis.io/learn/operate/redis-at-scale/talking-to-redis/redis-server-overview
+
+Redis is primarily **single-threaded**, meaning it handles all operations using a single core. This design choice avoids
+race conditions and the overhead caused by context switching between threads, leading to **predictable and fast
+performance**.
+
+However, since **Redis 6.0**, **multithreading** has been introduced **only for I/O operations** (e.g., accepting
+connections, reading requests, and sending responses). The number of threads for I/O can be configured using the
+`io-threads` directive in `redis.conf`, but **the core execution of commands remains single-threaded**.
+
+---
+
+### **Why Avoid Using Multiple Databases in Redis?**
+
+In Redis, multiple logical databases can be accessed using the `SELECT` command (e.g., `SELECT 1`, `SELECT 2`). However,
+using multiple databases is **discouraged** except in very limited cases.
+
+🔹 **Why?**
+
+- Redis still operates with a **single thread** for all databases, meaning that all DBs compete for the same CPU time.
+- There is **no real isolation** between databases beyond logical separation.
+- Most Redis commands, including `FLUSHDB` and `FLUSHALL`, affect all databases, leading to potential issues in shared
+  environments.
+
+Salvatore Sanfilippo, the creator of Redis, has discussed this topic in this conversation:  
+👉 [Google Groups Discussion](https://groups.google.com/g/redis-db/c/vS5wX8X4Cjg)
+
+**Alternative?** ✅ **Use key prefixes instead of multiple databases** (e.g., `user:1001:name`, `order:5001:status`).
+This approach is more scalable and recommended for applications needing separation within Redis. 🚀
+
 For more details, refer to the official Redis documentation: [Redis.io](https://redis.io/docs/)
 
 ---
