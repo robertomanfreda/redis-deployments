@@ -92,10 +92,11 @@ public class ReservationController {
         LettuceConnection lettuceConnection = (LettuceConnection) lettuceConnectionFactory.getConnection();
 
         /* Array reply. For each field:
-            Integer reply: -2 if no such field exists in the provided hash key, or the provided key does not exist.
-            Integer reply: 0 if the specified NX | XX | GT | LT condition has not been met.
-            Integer reply: 1 if the expiration time was set/updated.
-            Integer reply: 2 when HEXPIRE/HPEXPIRE is called with 0 seconds/milliseconds or when HEXPIREAT/HPEXPIREAT is called with a past Unix time in seconds/milliseconds.
+            Integer reply:  -2 if no such field exists in the provided hash key, or the provided key does not exist.
+            Integer reply:  0 if the specified NX | XX | GT | LT condition has not been met.
+            Integer reply:  1 if the expiration time was set/updated.
+            Integer reply:  2 when HEXPIRE/HPEXPIRE is called with 0 seconds/milliseconds or when HEXPIREAT/HPEXPIREAT
+                            is called with a past Unix time in seconds/milliseconds.
          */
 
         //noinspection unchecked
