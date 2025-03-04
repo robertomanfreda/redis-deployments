@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test/runtime/failover")
 @RequiredArgsConstructor
 @RestController
-public class TestController {
+public class TestFailoverController {
 
     private final RedisTemplate<String, String> redisTemplate;
 
