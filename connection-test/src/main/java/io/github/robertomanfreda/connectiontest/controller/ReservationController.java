@@ -44,6 +44,7 @@ public class ReservationController {
     /*
      * Manually releases the seat.
      */
+    @PostMapping("/unlock")
     public ResponseEntity<?> unlock() {
         return null;
     }
@@ -51,6 +52,7 @@ public class ReservationController {
     /*
      * Makes the reservation permanent by extending the TTL until the end of ticket sales.
      */
+    @PostMapping("/confirm")
     public ResponseEntity<?> confirm() {
         return null;
     }
