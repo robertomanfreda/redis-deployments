@@ -28,6 +28,7 @@ public class ReservationController {
         String hashKey = seatLock.getSeatType() + ":" + seatLock.getSeatNumber();
 
         try {
+            // TODO HERE YOU SHOULD OPTIMIZE ADDING ONLY field+value, probably you don't need the entire obj
             // REDIS COMMAND -> HSET key hashKey fields
             Boolean saved = redisTemplate.opsForHash().putIfAbsent(key, hashKey, objectMapper.writeValueAsString(seatLock));
 
