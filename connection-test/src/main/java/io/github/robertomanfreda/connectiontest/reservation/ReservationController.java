@@ -20,17 +20,24 @@ public class ReservationController {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /*
+     * Here, the idea is that for each seat lock, we insert the seat into a hash using putIfAbsent.
+     * This approach ensures an automatic locking mechanism, even when attempting to perform the same operation
+     * concurrently. Redis guarantees that the operation will be atomic.
+     *
+     * We then implement a custom solution (since Spring Data Redis doesn't support this functionality yet) using
+     * HEXPIRE to set a TTL on the key within the hash.
+     */
     @PostMapping("/lock")
     public ResponseEntity<?> lock(@RequestBody SeatLock seatLock) {
-        // TODO Check if seat is not already confirmed
-        // then
         String key = "stadium:" + seatLock.getStadiumName().toLowerCase() + ":seats:lock";
         String hashKey = seatLock.getSeatType() + ":" + seatLock.getSeatNumber();
 
         try {
             // TODO HERE YOU SHOULD OPTIMIZE ADDING ONLY field+value, probably you don't need the entire obj
             // REDIS COMMAND -> HSET key hashKey fields
-            Boolean saved = redisTemplate.opsForHash().putIfAbsent(key, hashKey, objectMapper.writeValueAsString(seatLock));
+            Boolean saved = redisTemplate.opsForHash().putIfAbsent(key, hashKey,
+                    objectMapper.writeValueAsString(seatLock));
 
             if (!saved) {
                 ResponseEntity.badRequest().body("Reservation already present");
@@ -44,6 +51,27 @@ public class ReservationController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /*
+     * Here, we ensure that HEXPIRE is set until the end of the ticket sale, to prevent further locking of the
+     * seat. This might be unnecessary if, before locking a seat in the /lock endpoint, we check the relational database
+     * to see if the seat has already been sold. Alternatively, we can decide to create a separate key to finalize the
+     * sale.
+     * Doing this, we offload data from the cache, but we would be forced to perform a union of multiple datasets
+     * when requesting the list of all occupied seats from the /locked/{stadiumName} endpoint.
+     */
+    @PostMapping("/confirm/{stadiumName}/{seatType}/{seatNumber}")
+    public ResponseEntity<?> confirm(@PathVariable String stadiumName, @PathVariable String seatType,
+                                     @PathVariable Integer seatNumber) {
+
+        String key = "stadium:" + stadiumName.toLowerCase() + ":seats:lock";
+        String hashKey = seatType + ":" + seatNumber;
+
+        // TODO Check return code >
+        customLettuceOperations.hexpire(key, hashKey, HexpireOption.GT, 1000000);
+
+        return ResponseEntity.ok().build();
     }
 
     /*
