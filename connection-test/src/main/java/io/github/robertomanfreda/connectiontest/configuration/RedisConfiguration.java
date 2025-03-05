@@ -7,13 +7,12 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import static io.lettuce.core.ReadFrom.REPLICA_PREFERRED;
 
 @Configuration
-public class RedisMasterReplicaSentinelConfigurationExample {
+public class RedisConfiguration {
 
     @Bean
     public RedisSentinelConfiguration redisSentinelConfiguration() {
@@ -40,13 +39,16 @@ public class RedisMasterReplicaSentinelConfigurationExample {
 
     @Bean
     public RedisTemplate<String, String> redisTemplate(@Autowired LettuceConnectionFactory
-                                                                          lettuceConnectionFactory) {
+                                                                   lettuceConnectionFactory) {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+
         return redisTemplate;
     }
 }
