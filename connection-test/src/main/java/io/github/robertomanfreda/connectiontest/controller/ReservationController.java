@@ -64,7 +64,8 @@ public class ReservationController {
     }
 
     /*
-     * Makes the reservation permanent by extending the TTL until the end of ticket sales.
+     * Makes the reservation permanent by extending the TTL until the end of ticket sales or by moving into another
+     * collection.
      */
     @PostMapping("/confirm")
     public ResponseEntity<?> confirm() {
