@@ -30,21 +30,17 @@ public class ReservationController {
         private Integer seatNumber;
     }
 
-    /**
+    /*
      * This endpoint "locks" a specific seat in a stadium for a user.
-     * <p>
+     *
      * The "lock" is implicitly done using Redis' `putIfAbsent` command, which ensures that the seat is not already occupied by another user.
      * If the seat is not already locked, it is added to the Redis hash with the user's information.
-     * <p>
+     *
      * The lock is temporary, and the seat will automatically expire after the specified time (600 seconds = 15 minutes)
      * if not confirmed. The expiration is handled via the `HEXPIRE` command, which ensures that the seat is released
      * automatically if the user does not confirm or cancel the reservation within the given time.
-     * <p>
-     * If the seat is already locked by another user, the operation fails, and an error response is returned.
      *
-     * @param lockRequest Contains the details of the user and the seat to be locked.
-     * @return ResponseEntity with status 200 OK if the seat is successfully locked,
-     * or status 400 Bad Request if the seat is already locked by another user.
+     * If the seat is already locked by another user, the operation fails, and an error response is returned.
      */
     @PostMapping("/lock")
     public ResponseEntity<?> lock(@RequestBody LockRequest lockRequest) {
@@ -115,7 +111,17 @@ public class ReservationController {
             @PathVariable String stadiumName,
             @PathVariable String seatType,
             @PathVariable Integer seatNumber) {
-        return null;
+
+        String key = stadiumName.toLowerCase().concat(":seat");
+        String hashKey = seatType.concat(":").concat(String.valueOf(seatNumber));
+
+        Object o = redisTemplate.opsForHash().get(key, hashKey);
+
+        if (o == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Seat not locked.");
+        }
+
+        return ResponseEntity.ok(o);
     }
 
     /*
